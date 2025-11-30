@@ -1,7 +1,7 @@
 import { clerkMiddleware, clerkClient } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-const PublicRoutes = ['/sign-in', '/sign-up', "/"]
+const PublicRoutes = ['/sign-in', '/sign-up', "/","/api/webhooks/register"]
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const { userId } = await auth()
@@ -18,6 +18,14 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     const role = user.publicMetadata.role as string | undefined
 
     if (role === "admin" && PublicRoutes.includes(path)) {
+      return NextResponse.redirect(new URL('/admin-dashboard', req.url))
+    }
+
+    if(role !== "admin" && path.includes("admin")){
+      return NextResponse.redirect(new URL('/dashboard', req.url))
+    }
+
+    if(role === "admin" && path === "/dashboard"){
       return NextResponse.redirect(new URL('/admin-dashboard', req.url))
     }
 

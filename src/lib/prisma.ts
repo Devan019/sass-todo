@@ -1,7 +1,9 @@
 import { PrismaClient } from "@/prisma/src/prisma/client"
 
 const getPrismaClient = (): PrismaClient => {
-  return new PrismaClient()
+  return new PrismaClient({
+    accelerateUrl : process.env.DATABASE_URL ?? ""
+  })
 }
 
 const gobalPrisma = global as unknown as {
